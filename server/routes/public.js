@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { DEMO_ACCOUNTS } from '../demo.js';
+import { formatPhone } from '../security.js';
 import { isValidDate, WEEKDAY_SHORT } from '../time.js';
 
 export function publicConfig(config, demo, paymentProvider) {
@@ -21,6 +23,12 @@ export function publicConfig(config, demo, paymentProvider) {
       features: features || [],
     })),
     demo,
+    // в демо-режиме показываем тестовые логины на странице входа
+    demoAccounts: demo
+      ? Object.fromEntries(
+          Object.entries(DEMO_ACCOUNTS).map(([k, a]) => [k, { phone: formatPhone(a.phone), password: a.password }])
+        )
+      : null,
     paymentProvider,
   };
 }

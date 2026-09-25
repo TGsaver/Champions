@@ -12,6 +12,7 @@ import { publicRoutes } from './routes/public.js';
 
 const PUBLIC = path.resolve(import.meta.dirname, '../public');
 
+
 const CSP = [
   "default-src 'self'",
   "script-src 'self'",
@@ -118,19 +119,17 @@ export async function createApp({
   const html = (res, body, status = 200) => res.status(status).type('html').set('Cache-Control', 'no-cache').send(body);
   app.get('/', async (req, res) => html(res, await renderer.render('index')));
   app.get('/privacy', async (req, res) => html(res, await renderer.render('privacy')));
-  app.get(['/account', '/account/'], (req, res) =>
-    res.set('Cache-Control', 'no-cache').sendFile(path.join(PUBLIC, 'account/index.html'))
-  );
-  app.get(['/admin', '/admin/'], (req, res) =>
-    res.set('Cache-Control', 'no-cache').sendFile(path.join(PUBLIC, 'admin/index.html'))
-  );
+  app.get(['/account', '/account/'], async (req, res) => html(res, await renderer.render('account')));
+  app.get(['/admin', '/admin/'], async (req, res) => html(res, await renderer.render('admin')));
 
   app.use(
     express.static(PUBLIC, {
       index: false,
       setHeaders(res, file) {
-        // ассеты подключаются с ?v=<хэш>, поэтому их можно долго кэшировать
-        if (file.includes(`${path.sep}assets${path.sep}`)) res.set('Cache-Control', 'public, max-age=604800');
+        // JS-модули импортируют друг друга без ?v= — всегда сверяем по ETag.
+        // Остальные ассеты подключаются с ?v=<хэш> и кэшируются надолго.
+        if (file.endsWith('.js')) res.set('Cache-Control', 'no-cache');
+        else if (file.includes(`${path.sep}assets${path.sep}`)) res.set('Cache-Control', 'public, max-age=604800');
       },
     })
   );

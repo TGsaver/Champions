@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Champions">
+  <title>Личный кабинет — Gym Champions</title>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="stylesheet" href="/assets/css/base.css?v=<%= v %>">
+  <link rel="stylesheet" href="/assets/css/app.css?v=<%= v %>">
+  <script src="/assets/js/boot.js?v=<%= v %>"></script>
+</head>
+<body class="app-page">
+  <header class="appbar">
+    <div class="container appbar__inner">
+      <a class="appbar__logo" href="/" aria-label="Gym Champions — на главную">
+        <img src="/assets/img/wordmark.svg" alt="Gym Champions" width="150" height="18"><span>Кабинет</span>
+      </a>
+      <div class="appbar__right">
+        <a class="live-chip" href="/#live" data-live-chip hidden><span class="dot"></span><span data-live-chip-text></span></a>
+      </div>
+    </div>
+  </header>
+  <main class="app" id="app" aria-live="polite">
+    <div class="app-loading"><span class="spinner" aria-label="Загрузка"></span></div>
+  </main>
+  <script type="module" src="/assets/js/account.js?v=<%= v %>"></script>
+</body>
+</html>

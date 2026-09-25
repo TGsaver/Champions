@@ -1,24 +1,5 @@
 /* Gym Champions — главная страница. */
 
-/* ---------- Эмблема ---------- */
-.emblem-gold {
-  aspect-ratio: 600 / 290;
-  background: linear-gradient(112deg, #9c7334 0%, #e7cf96 16%, #fff8e6 26%, #efd9a4 36%, #c69a4f 52%, #f0deb0 66%,
-      #fff4d6 74%, #d8b36a 86%, #a57b3a 100%);
-  background-size: 240% 100%;
-  -webkit-mask: url('../img/emblem.svg') center / contain no-repeat;
-  mask: url('../img/emblem.svg') center / contain no-repeat;
-  animation: emblem-sheen 9s var(--ease-in-out) infinite alternate;
-}
-@keyframes emblem-sheen {
-  from {
-    background-position: 0% 0;
-  }
-  to {
-    background-position: 100% 0;
-  }
-}
-
 /* ---------- Интро ---------- */
 .intro {
   position: fixed;
@@ -1254,19 +1235,6 @@
   padding: 32px;
   text-align: center;
   color: var(--text-2);
-}
-.spinner {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2.5px solid var(--surface-3);
-  border-top-color: var(--gold);
-  animation: spin 0.9s linear infinite;
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 .review-strip {
   display: grid;
