@@ -1,1 +1,22 @@
-<h1>404</h1>
+<!doctype html>
+<html lang="ru" class="no-js">
+<head>
+  <%- include('partials/head') %>
+  <title>Страница не найдена — <%= gym.name %></title>
+  <meta name="robots" content="noindex">
+  <script src="/assets/js/boot.js?v=<%= v %>"></script>
+</head>
+<body>
+  <%- include('partials/nav') %>
+  <main id="main" class="page">
+    <div class="container prose" style="text-align:center">
+      <p class="eyebrow">Ошибка 404</p>
+      <h1>Такой страницы нет.</h1>
+      <p>Возможно, её переместили. Зато зал на месте.</p>
+      <p style="margin-top:28px"><a class="btn btn--gold" href="/" style="color:#16140f">На главную</a></p>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+  <script type="module" src="/assets/js/page.js?v=<%= v %>"></script>
+</body>
+</html>

@@ -1,1 +1,426 @@
-<h1>index</h1>
+<%
+  const womenDays = gym.schedule.filter((d) => d.women);
+  const womenLabel = womenDays.map((d) => ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][d.day]).join(', ');
+  const womenTime = womenDays.length ? `${womenDays[0].women[0]}–${womenDays[0].women[1]}` : '';
+  const dayNames = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ExerciseGym',
+    name: gym.name,
+    description: gym.tagline,
+    telephone: gym.contacts.phone,
+    image: '/assets/img/og.png',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: `${gym.address.street}, ${gym.address.details}`,
+      addressLocality: gym.address.city,
+      postalCode: gym.address.postalCode,
+      addressCountry: 'RU',
+    },
+    openingHoursSpecification: scheduleGroups.filter((g) => !g.closed).map((g) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: g.days.map((d) => dayNames[d]),
+      opens: g.open,
+      closes: g.close,
+    })),
+    sameAs: [gym.maps.yandexUrl, gym.maps.twoGisUrl, gym.contacts.instagram].filter(Boolean),
+    priceRange: `от ${minMonthly} ₽ в месяц`,
+  };
+  const reviewSource = (id) => reviews.sources.find((s) => s.id === id);
+  const stars = (value) => [1,2,3,4,5].map((i) => `<span class="${value >= i - 0.25 ? '' : 'off'}">${icon('star')}</span>`).join('');
+%><!doctype html>
+<html lang="ru" class="no-js">
+<head>
+  <%- include('partials/head') %>
+  <title><%= gym.name %> — тренажёрный зал в Махачкале, <%= gym.address.street %></title>
+  <meta name="description" content="Тренажёрный зал <%= gym.name %> в Махачкале: <%= gym.address.street %>, <%= gym.address.details %>. Безлимит от <%= rub(minMonthly) %> в месяц, разовые посещения, персональный тренер, женские часы. Загрузка зала онлайн и личный кабинет с QR-пропуском.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="<%= gym.name %> — стань чемпионом">
+  <meta property="og:description" content="Тренажёрный зал в Махачкале на <%= gym.address.street %>. Загрузка зала онлайн, абонементы и QR-пропуск в личном кабинете.">
+  <meta property="og:image" content="/assets/img/og.png">
+  <link rel="stylesheet" href="/assets/css/landing.css?v=<%= v %>">
+  <script src="/assets/js/boot.js?v=<%= v %>"></script>
+  <script type="application/ld+json"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script>
+</head>
+<body>
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__glow"></div>
+    <div class="intro__stage" id="intro-stage">
+      <%- emblem('intro') %>
+      <div class="emblem-gold"></div>
+      <div class="intro__sweep"></div>
+    </div>
+    <p class="intro__caption">Махачкала · <%= gym.address.street %></p>
+    <button class="intro__skip" type="button" data-intro-skip>Пропустить</button>
+  </div>
+
+  <%- include('partials/nav') %>
+
+  <main id="main">
+    <!-- ============ Первый экран ============ -->
+    <section class="hero" id="top">
+      <div class="hero__bg"></div>
+      <div class="hero__spot" aria-hidden="true"></div>
+      <div class="container">
+        <a class="live-pill" href="#live" data-hero style="--d:0ms" data-live-pill>
+          <span class="dot"></span><span data-live-pill-text>Загрузка зала онлайн</span>
+        </a>
+        <h1 class="display hero__title" data-hero style="--d:80ms">Стань <span class="text-gold">чемпионом.</span></h1>
+        <p class="lead" data-hero style="--d:180ms">
+          Тренажёрный зал на <%= gym.address.street.replace('ул. ', '') %> в Махачкале. Сила, дисциплина и атмосфера, в которой хочется работать на максимум.
+        </p>
+        <div class="hero__cta" data-hero style="--d:280ms">
+          <a class="btn btn--gold" href="#plans">Выбрать абонемент</a>
+          <a class="link" href="#live">Загрузка зала сейчас</a>
+        </div>
+      </div>
+      <div class="hero__visual" data-hero-visual>
+        <div class="hero__emblem emblem-gold" id="hero-emblem" role="img" aria-label="Логотип <%= gym.name %>"></div>
+        <div class="hero__floor"></div>
+      </div>
+      <span class="hero__scroll" aria-hidden="true"></span>
+    </section>
+
+    <!-- ============ Манифест ============ -->
+    <section class="manifesto" aria-label="О зале">
+      <div class="container">
+        <p class="manifesto__text" data-scroll-words>Здесь не ищут оправданий. Здесь поднимают веса, ставят личные рекорды и возвращаются снова. Каждая тренировка — шаг к титулу <span class="w--gold-src">чемпиона.</span></p>
+      </div>
+    </section>
+
+    <!-- ============ Зал ============ -->
+    <section class="section" id="gym">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow" data-reveal>Зал</p>
+          <h2 class="section-title" data-reveal style="--d:60ms">Всё для результата.</h2>
+          <p class="lead" data-reveal style="--d:120ms">Абонементы под любой график, женские часы, персональный тренер и загрузка зала онлайн.</p>
+        </div>
+
+        <div class="bento">
+          <article class="tile tile--wide tile--price" data-reveal>
+            <div class="tile__deco emblem-gold" aria-hidden="true"></div>
+            <p class="tile__kicker">Безлимит</p>
+            <p class="tile__big"><span class="text-gold" data-count="<%= minMonthly %>"><%= rub(minMonthly) %></span></p>
+            <p class="tile__text" style="margin-top:14px;max-width:460px">в месяц. Приходите сколько угодно — без ограничений по посещениям. Есть разовые визиты и пакеты.</p>
+            <a class="link" href="#plans">Все абонементы</a>
+          </article>
+
+          <article class="tile tile--live" data-reveal style="--d:80ms">
+            <h3 class="tile__title" style="margin-top:0">Сейчас в зале</h3>
+            <p class="tile__live-num"><span data-live-count>—</span><span class="dot" data-live-dot></span></p>
+            <p class="tile__live-label" data-live-label>Загружаем данные…</p>
+            <div class="spark" data-spark aria-hidden="true"></div>
+            <a class="link" href="#live">Прогноз загрузки</a>
+          </article>
+
+          <article class="tile" data-reveal>
+            <%- icon('trainer', 'tile__icon') %>
+            <h3 class="tile__title">Персональный тренер</h3>
+            <p class="tile__text">Составит программу, поставит технику и поможет выйти на новый уровень.</p>
+          </article>
+
+          <% if (womenDays.length) { %>
+          <article class="tile" data-reveal style="--d:80ms">
+            <%- icon('clock', 'tile__icon') %>
+            <h3 class="tile__title">Женские часы</h3>
+            <p class="tile__text"><b><%= womenLabel %> · <%= womenTime %></b>. В это время зал работает только для женщин.</p>
+          </article>
+          <% } %>
+
+          <article class="tile" data-reveal style="--d:160ms">
+            <%- icon('arch', 'tile__icon') %>
+            <h3 class="tile__title">Молельная комната</h3>
+            <p class="tile__text">Отдельное место для молитвы — тренировка легко впишется в ваш день.</p>
+          </article>
+
+          <article class="tile tile--half tile--qr" data-reveal>
+            <div class="qr-art" aria-hidden="true"><%- sampleQr %></div>
+            <%- icon('qr', 'tile__icon') %>
+            <h3 class="tile__title">QR-пропуск</h3>
+            <p class="tile__text" style="max-width:340px">Вход по QR-коду из личного кабинета — без пластиковых карт и бумажных абонементов.</p>
+          </article>
+
+          <article class="tile tile--half tile--place" data-reveal style="--d:80ms">
+            <img src="/assets/img/sign.jpg" alt="Вывеска Gym Champions на окнах второго этажа" loading="lazy" width="495" height="196">
+            <h3 class="tile__title"><%= gym.address.details %> · <%= gym.address.street.replace('ул. ', '') %></h3>
+            <p class="tile__text">Ищите этот знак на окнах второго этажа.</p>
+            <a class="link" href="#contacts">Как добраться</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Загрузка зала ============ -->
+    <section class="section" id="live" style="padding-top:0">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow" data-reveal>Загрузка зала</p>
+          <h2 class="section-title" data-reveal style="--d:60ms">Сколько людей в зале.<br><span class="muted">Прямо сейчас.</span></h2>
+          <p class="lead" data-reveal style="--d:120ms">Проверьте загрузку, прежде чем выйти из дома. Каждый вход по QR-пропуску учитывается мгновенно, а прогноз подскажет лучшее время для тренировки.</p>
+        </div>
+
+        <div class="live-card">
+          <div class="gauge-card" data-reveal>
+            <div class="gauge">
+              <svg viewBox="0 0 240 240" aria-hidden="true">
+                <circle class="gauge__track" cx="120" cy="120" r="102"/>
+                <circle class="gauge__bar" cx="120" cy="120" r="102" pathLength="1" data-gauge-bar/>
+              </svg>
+              <div class="gauge__center">
+                <span class="gauge__num" data-live-count>—</span>
+                <span class="gauge__unit" data-live-unit>человек в зале</span>
+                <span class="gauge__cap" data-live-cap></span>
+              </div>
+            </div>
+            <div>
+              <span class="status-chip"><span class="dot" data-live-dot></span><span data-live-label>Загружаем данные…</span></span>
+              <p class="gauge-card__meta" data-live-status></p>
+            </div>
+          </div>
+
+          <div class="forecast" data-reveal style="--d:100ms">
+            <div class="forecast__head">
+              <h3 class="forecast__title">Прогноз по часам</h3>
+              <div class="segmented" role="tablist" aria-label="День недели" data-day-tabs></div>
+            </div>
+            <div class="chart" data-chart role="img" aria-label="Прогноз загрузки по часам"></div>
+            <div class="chart__axis" data-chart-axis aria-hidden="true"></div>
+            <div class="forecast__foot">
+              <p class="forecast__best" data-best></p>
+              <div class="legend" aria-label="Обозначения">
+                <span><i style="--c:var(--green)"></i>Свободно</span>
+                <span><i style="--c:var(--yellow)"></i>Умеренно</span>
+                <span><i style="--c:var(--orange)"></i>Много людей</span>
+                <% if (womenDays.length) { %><span><i style="--c:var(--pink)"></i>Женские часы</span><% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="live__note" data-live-note>Данные обновляются автоматически.<% if (demo) { %> Сайт работает в демо-режиме: число посетителей смоделировано.<% } %></p>
+      </div>
+    </section>
+
+    <!-- ============ Абонементы ============ -->
+    <section class="section" id="plans" style="padding-top:0">
+      <div class="container">
+        <div class="section__head section__head--center">
+          <p class="eyebrow" data-reveal>Абонементы</p>
+          <h2 class="section-title" data-reveal style="--d:60ms">Выберите свой формат.</h2>
+          <p class="lead" data-reveal style="--d:120ms">Оплачивайте онлайн в личном кабинете или на ресепшене. QR-пропуск появится сразу после оплаты.</p>
+        </div>
+        <div class="plans__grid">
+          <% plans.forEach((p, i) => { %>
+          <article class="plan<%= p.featured ? ' plan--featured' : '' %>" data-reveal style="--d:<%= i * 70 %>ms">
+            <% if (p.featured) { %><span class="plan__badge">Популярный</span><% } %>
+            <h3 class="plan__title"><%= p.title %></h3>
+            <p class="plan__subtitle"><%= p.subtitle %></p>
+            <p class="plan__price"><%= p.priceText %></p>
+            <p class="plan__note"><%= p.note %></p>
+            <ul class="plan__features">
+              <% (p.features || []).forEach((f) => { %><li><%- icon('check') %><span><%= f %></span></li><% }) %>
+            </ul>
+            <a class="btn <%= p.featured ? 'btn--gold' : 'btn--ghost' %> btn--block" href="/account?buy=<%= p.id %>">Купить онлайн</a>
+          </article>
+          <% }) %>
+        </div>
+        <p class="plans__extra" data-reveal>Персональные тренировки — стоимость уточняйте у администратора: <a href="<%= gym.contacts.phoneHref %>"><%= gym.contacts.phone %></a></p>
+      </div>
+    </section>
+
+    <!-- ============ Личный кабинет ============ -->
+    <section class="section app" id="app" style="padding-top:0">
+      <div class="container app__grid">
+        <div>
+          <p class="eyebrow" data-reveal>Личный кабинет</p>
+          <h2 class="section-title" data-reveal style="--d:60ms">Весь зал —<br>в вашем телефоне.</h2>
+          <p class="lead" data-reveal style="--d:120ms">Пропуск, баланс посещений и статистика тренировок всегда под рукой.</p>
+          <ul class="feature-list">
+            <li data-reveal><%- icon('qr') %><div><b>QR-пропуск</b><span>Покажите код на входе — посещение отметится автоматически.</span></div></li>
+            <li data-reveal style="--d:60ms"><%- icon('wallet') %><div><b>Пополнение онлайн</b><span>Пакет посещений или безлимит — в пару касаний.</span></div></li>
+            <li data-reveal style="--d:120ms"><%- icon('chart') %><div><b>История и статистика</b><span>Все тренировки, время в зале и серия недель без пропусков.</span></div></li>
+            <li data-reveal style="--d:180ms"><%- icon('snow') %><div><b>Заморозка абонемента</b><span>Уезжаете или заболели? Поставьте безлимит на паузу.</span></div></li>
+            <li data-reveal style="--d:240ms"><%- icon('target') %><div><b>Цели и уровни</b><span>Ставьте цель на месяц и растите от «Новичка» до «Легенды».</span></div></li>
+          </ul>
+          <a class="btn btn--gold" href="/account" data-reveal>Открыть личный кабинет</a>
+        </div>
+
+        <div class="phone-wrap" data-reveal="scale">
+          <div class="phone" data-phone aria-label="Пример экрана личного кабинета" role="img">
+            <div class="phone__screen">
+              <div class="phone__island"></div>
+              <div class="phone__status"><span>9:41</span><span>●●●</span></div>
+              <p class="phone__hello">Привет, Шамиль</p>
+              <div class="pass">
+                <div class="pass__top">
+                  <div class="pass__emblem"></div>
+                  <div class="pass__type">Абонемент<b>Безлимит</b></div>
+                </div>
+                <div class="pass__body">
+                  <div>
+                    <div class="pass__name">Шамиль</div>
+                    <div class="pass__meta">Действует до 24.10</div>
+                    <div class="pass__meta">GC · DEMO-2026</div>
+                  </div>
+                  <div class="pass__qr"><%- sampleQr %></div>
+                </div>
+              </div>
+              <div class="phone-rings">
+                <svg viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="27" fill="none" stroke="#3a2f16" stroke-width="8"/>
+                  <circle cx="32" cy="32" r="27" fill="none" stroke="#f0deb0" stroke-width="8" stroke-linecap="round" pathLength="1" stroke-dasharray="0.72 1"/>
+                  <circle cx="32" cy="32" r="16" fill="none" stroke="#0e3a1c" stroke-width="7"/>
+                  <circle cx="32" cy="32" r="16" fill="none" stroke="#30d158" stroke-width="7" stroke-linecap="round" pathLength="1" stroke-dasharray="0.5 1"/>
+                </svg>
+                <div><b>10 из 14</b><span>тренировок в сентябре</span></div>
+              </div>
+              <div class="phone-row"><span>Сейчас в зале</span><b><span data-live-count>—</span> чел.</b></div>
+              <div class="phone-btn">Пополнить</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Отзывы ============ -->
+    <section class="section" id="reviews" style="padding-top:0">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow" data-reveal>Отзывы</p>
+          <h2 class="section-title" data-reveal style="--d:60ms">Нам доверяют.</h2>
+          <p class="lead" data-reveal style="--d:120ms">Что говорят о <%= gym.name %> посетители на Яндекс Картах и в 2ГИС. Были у нас? Оставьте отзыв — это очень помогает.</p>
+        </div>
+
+        <% if (reviews.reviews.length) { %>
+        <div class="review-strip" data-reveal>
+          <% reviews.reviews.forEach((r) => { const src = reviewSource(r.source); %>
+          <article class="review">
+            <div class="review__head">
+              <span class="review__avatar"><%= (r.author || '?').trim().charAt(0).toUpperCase() %></span>
+              <div>
+                <div class="review__author"><%= r.author %></div>
+                <div class="review__meta"><%= src ? src.name : r.source %><% if (r.date) { %> · <%= r.date.split('-').reverse().join('.') %><% } %></div>
+              </div>
+            </div>
+            <% if (r.rating) { %><span class="stars" aria-label="Оценка <%= r.rating %> из 5"><%- stars(r.rating) %></span><% } %>
+            <p class="review__text"><%= r.text %></p>
+          </article>
+          <% }) %>
+        </div>
+        <% } %>
+
+        <div class="reviews__grid">
+          <div class="sources">
+            <% reviews.sources.forEach((s, i) => { %>
+            <article class="source" data-reveal style="--d:<%= i * 80 %>ms">
+              <h3 class="source__name"><%= s.name %></h3>
+              <% if (s.rating) { %>
+              <div class="source__rating">
+                <span class="source__value"><%= s.rating.toFixed(1).replace('.', ',') %></span>
+                <span class="stars" aria-label="Рейтинг <%= s.rating %> из 5"><%- stars(s.rating) %></span>
+              </div>
+              <% if (s.count) { %><p class="source__hint"><%= s.count %> оценок</p><% } %>
+              <% } else { %>
+              <p class="source__hint">Актуальный рейтинг и все отзывы — в виджете рядом.</p>
+              <% } %>
+              <div class="source__links">
+                <a class="link" href="<%= s.url %>" target="_blank" rel="noopener">Читать отзывы</a>
+                <a class="link" href="<%= s.reviewUrl || s.url %>" target="_blank" rel="noopener">Оставить отзыв</a>
+              </div>
+            </article>
+            <% }) %>
+          </div>
+
+          <div class="widget-frame" data-lazy-frame="<%= gym.maps.reviewsWidgetUrl %>" data-frame-title="Отзывы о <%= gym.name %> на Яндекс Картах" data-reveal>
+            <div class="widget-frame__placeholder">
+              <span class="spinner" aria-hidden="true"></span>
+              <p>Загружаем отзывы с Яндекс Карт…</p>
+              <a class="link" href="<%= gym.maps.yandexReviewsUrl %>" target="_blank" rel="noopener">Открыть отзывы на Яндекс Картах</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Контакты ============ -->
+    <section class="section" id="contacts" style="padding-top:0">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow" data-reveal>Контакты</p>
+          <h2 class="section-title" data-reveal style="--d:60ms">Приходите<br>на тренировку.</h2>
+          <p class="lead" data-reveal style="--d:120ms"><%= gym.address.full %>.</p>
+        </div>
+
+        <div class="contacts__grid">
+          <article class="card" data-reveal>
+            <h3 class="card__title">Адрес</h3>
+            <p class="card__big"><%= gym.address.street %></p>
+            <p class="card__text"><%= gym.address.details %>, <%= gym.address.city %></p>
+            <figure class="sign-photo">
+              <img src="/assets/img/sign.jpg" alt="Вывеска Gym Champions" loading="lazy" width="495" height="196">
+              <figcaption>Ищите этот знак на окнах второго этажа</figcaption>
+            </figure>
+            <div class="card__actions">
+              <a class="btn btn--gold btn--sm" href="<%= gym.maps.yandexUrl %>" target="_blank" rel="noopener">Яндекс Карты</a>
+              <a class="btn btn--ghost btn--sm" href="<%= gym.maps.twoGisUrl %>" target="_blank" rel="noopener">2ГИС</a>
+            </div>
+          </article>
+
+          <article class="card" data-reveal style="--d:80ms">
+            <h3 class="card__title">Часы работы</h3>
+            <p class="open-now"><span class="dot" data-open-dot></span><span data-open-text>Часы работы</span></p>
+            <ul class="hours">
+              <% scheduleGroups.forEach((g) => { %>
+              <li data-days="<%= g.days.join(',') %>">
+                <span class="day"><%= g.label %></span>
+                <span class="time">
+                  <% if (g.closed) { %>Выходной<% } else if (g.women) { %>
+                  <span class="slot slot--women"><%= g.women[0] %>–<%= g.women[1] %> <small>женские часы</small></span>
+                  <% if (g.women[1] < g.close) { %><span class="slot"><%= g.women[1] %>–<%= g.close %> <small>для всех</small></span><% } %>
+                  <% } else { %><%= g.open %>–<%= g.close %><% } %>
+                </span>
+              </li>
+              <% }) %>
+            </ul>
+          </article>
+
+          <article class="card" data-reveal style="--d:160ms">
+            <h3 class="card__title">Связаться</h3>
+            <ul class="contact-list">
+              <li><a href="<%= gym.contacts.phoneHref %>"><%- icon('phone') %><span><%= gym.contacts.phone %><small>Позвонить</small></span></a></li>
+              <% if (gym.contacts.whatsapp) { %><li><a href="<%= gym.contacts.whatsapp %>" target="_blank" rel="noopener"><%- icon('chat') %><span>WhatsApp<small>Написать в мессенджер</small></span></a></li><% } %>
+              <% if (gym.contacts.instagram) { %><li><a href="<%= gym.contacts.instagram %>" target="_blank" rel="noopener"><%- icon('instagram') %><span><%= gym.contacts.instagramHandle %><small>Instagram</small></span></a></li><% } %>
+              <li><a href="/account"><%- icon('user') %><span>Личный кабинет<small>Абонементы и QR-пропуск</small></span></a></li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="map-frame" data-lazy-frame="<%= gym.maps.mapWidgetUrl %>" data-frame-title="<%= gym.name %> на карте" data-reveal>
+          <div class="widget-frame__placeholder">
+            <span class="spinner" aria-hidden="true"></span>
+            <a class="link" href="<%= gym.maps.yandexUrl %>" target="_blank" rel="noopener">Открыть на Яндекс Картах</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Финал ============ -->
+    <section class="section final">
+      <div class="container">
+        <div class="final__emblem emblem-gold" data-reveal="scale" role="img" aria-label="<%= gym.name %>"></div>
+        <h2 class="section-title" data-reveal>Первая тренировка —<br><span class="text-gold">сегодня.</span></h2>
+        <p class="lead" data-reveal style="--d:80ms;margin-left:auto;margin-right:auto">Купите абонемент онлайн и покажите QR-код на входе.</p>
+        <div class="hero__cta" data-reveal style="--d:140ms">
+          <a class="btn btn--gold" href="/account">Купить абонемент</a>
+          <a class="btn btn--ghost" href="<%= gym.contacts.phoneHref %>">Позвонить</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script type="module" src="/assets/js/landing.js?v=<%= v %>"></script>
+</body>
+</html>

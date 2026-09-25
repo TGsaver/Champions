@@ -1,0 +1,28 @@
+<a class="skip-link" href="#main">К содержимому</a>
+<header class="nav" id="nav">
+  <div class="container nav__inner">
+    <a class="nav__logo" href="/" aria-label="<%= gym.name %> — на главную"><%- wordmark %></a>
+    <nav class="nav__links" aria-label="Разделы сайта">
+      <a href="/#gym">Зал</a>
+      <a href="/#live">Загрузка</a>
+      <a href="/#plans">Абонементы</a>
+      <a href="/#app">Кабинет</a>
+      <a href="/#reviews">Отзывы</a>
+      <a href="/#contacts">Контакты</a>
+    </nav>
+    <div class="nav__actions">
+      <a class="nav__live" href="/#live" data-live-mini hidden><span class="dot"></span><span data-live-mini-text></span></a>
+      <a class="btn btn--gold btn--sm" href="/account">Личный кабинет</a>
+      <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Меню"><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="menu" id="menu" hidden>
+    <a href="/#gym" style="--i:0">Зал</a>
+    <a href="/#live" style="--i:1">Загрузка</a>
+    <a href="/#plans" style="--i:2">Абонементы</a>
+    <a href="/#app" style="--i:3">Личный кабинет</a>
+    <a href="/#reviews" style="--i:4">Отзывы</a>
+    <a href="/#contacts" style="--i:5">Контакты</a>
+    <a class="btn btn--gold" href="/account" style="--i:6">Войти в кабинет</a>
+  </div>
+</header>

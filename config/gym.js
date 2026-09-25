@@ -35,6 +35,10 @@ export default {
     yandexReviewsUrl: 'https://yandex.ru/maps/org/gym_champion/199573048114/reviews/',
     twoGisUrl: 'https://2gis.ru/makhachkala/firm/70000001033665957',
     twoGisReviewsUrl: 'https://2gis.ru/makhachkala/firm/70000001033665957/tab/reviews',
+    // Официальные виджеты Яндекса. Точный код карты: карточка зала в Яндекс Картах →
+    // «Поделиться» → «Встроить карту» (возьмите адрес из src у iframe).
+    reviewsWidgetUrl: 'https://yandex.ru/maps-reviews-widget/199573048114?comments',
+    mapWidgetUrl: 'https://yandex.ru/map-widget/v1/?mode=search&oid=199573048114&ol=biz&z=16',
   },
 
   // Расписание. day: 0 — понедельник … 6 — воскресенье.
@@ -77,8 +81,8 @@ export default {
     },
     {
       id: 'month',
-      title: 'Безлимит',
-      subtitle: '30 дней',
+      title: 'Месяц',
+      subtitle: 'Безлимит · 30 дней',
       price: 2200,
       days: 30,
       freezeDays: 7,
@@ -87,8 +91,8 @@ export default {
     },
     {
       id: 'quarter',
-      title: 'Безлимит 3 месяца',
-      subtitle: '90 дней',
+      title: '3 месяца',
+      subtitle: 'Безлимит · 90 дней',
       price: 6000,
       days: 90,
       freezeDays: 21,

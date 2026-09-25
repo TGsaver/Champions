@@ -4,12 +4,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import QRCode from 'qrcode';
+import { icon } from '../public/assets/js/icons.js';
 import { WEEKDAY_SHORT } from './time.js';
 
 const VIEWS = path.resolve(import.meta.dirname, 'views');
 const ROOT = path.resolve(import.meta.dirname, '..');
 
-const rub = (n) => `${n.toLocaleString('ru-RU').replace(/ /g, ' ')} ₽`;
+const rub = (n) => `${n.toLocaleString('ru-RU')}\u00a0₽`;
 
 /** Группирует одинаковые дни расписания: «Пн, Ср, Пт — 09:00–22:00». */
 export function groupSchedule(schedule) {
@@ -70,6 +71,7 @@ export async function createRenderer({ config, demo }) {
     scheduleGroups: groupSchedule(config.schedule),
     reviews: loadReviews(),
     emblem,
+    icon,
     wordmark,
     sampleQr,
     rub,
