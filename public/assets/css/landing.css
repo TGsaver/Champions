@@ -1362,7 +1362,11 @@
 .hours .slot {
   display: block;
 }
+.hours .slot + .slot {
+  margin-top: 6px;
+}
 .hours .slot small {
+  display: block;
   color: var(--text-3);
   font-size: 13px;
 }

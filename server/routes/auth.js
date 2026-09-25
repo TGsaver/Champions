@@ -43,7 +43,8 @@ export function authRoutes(ctx) {
   const r = Router();
   const ipLimiter = new RateLimiter({ windowMs: 15 * 60000, max: 30 });
   const phoneLimiter = new RateLimiter({ windowMs: 15 * 60000, max: 8 });
-  const registerLimiter = new RateLimiter({ windowMs: 60 * 60000, max: 10 });
+  // Регистрации ограничены по IP (в зале многие сидят в одной Wi-Fi-сети — запас с избытком).
+  const registerLimiter = new RateLimiter({ windowMs: 60 * 60000, max: 30 });
 
   const limit = (limiter, key) => {
     const { allowed, retryAfter } = limiter.hit(key);

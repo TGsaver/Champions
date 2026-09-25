@@ -31,10 +31,17 @@ export function newPassCode() {
   return code;
 }
 
-/** Нормализует код с пропуска: «gc:abcd-2345» -> «ABCD2345». */
+// Сканер QR-кодов «печатает» как клавиатура: при русской раскладке вместо GC:ABCD2345
+// приходит «ПСЖФИСВ2345». Возвращаем символы клавиш латинской раскладки.
+const RU_TO_EN = Object.fromEntries(
+  [...'ЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬ'].map((ru, i) => [ru, 'QWERTYUIOPASDFGHJKLZXCVBNM'[i]])
+);
+
+/** Нормализует код с пропуска: «gc:abcd-2345» или «псжфисв2345» -> «ABCD2345». */
 export function normalizePassCode(input) {
-  const s = String(input || '')
-    .toUpperCase()
+  const s = [...String(input || '').toUpperCase()]
+    .map((ch) => RU_TO_EN[ch] ?? ch)
+    .join('')
     .replace(/^GC[:\-\s]?/, '')
     .replace(/[^0-9A-Z]/g, '');
   return s.length === 8 ? s : null;

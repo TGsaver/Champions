@@ -515,6 +515,7 @@ function openTopup(preselect) {
   let selected = plans.find((p) => p.id === preselect)?.id || plans.find((p) => p.featured)?.id || plans[0].id;
   const sheet = openSheet({ title: 'Пополнить абонемент' });
 
+  const online = Boolean(state.config.paymentProvider);
   const renderPlans = () => {
     const plan = plans.find((p) => p.id === selected);
     sheet.setTitle('Пополнить абонемент');
@@ -532,8 +533,12 @@ function openTopup(preselect) {
           .join('')}
       </div>
       <p class="sheet__text" style="margin:16px 0 0">${planEffect(plan)}</p>
-      <button class="btn btn--gold btn--block" type="button" style="margin-top:18px;height:52px" data-pay>Оплатить ${rub(plan.price)}</button>
-      <p class="panel__sub" style="text-align:center;margin:12px 0 0">Можно оплатить и на ресепшене — наличными или картой.</p>`);
+      ${
+        online
+          ? `<button class="btn btn--gold btn--block" type="button" style="margin-top:18px;height:52px" data-pay>Оплатить ${rub(plan.price)}</button>
+             <p class="panel__sub" style="text-align:center;margin:12px 0 0">Можно оплатить и на ресепшене — наличными или картой.</p>`
+          : `<p class="pay-note" style="margin-top:18px">${icon('wallet')}<span>Оплата — на ресепшене, наличными или картой. Назовите администратору номер телефона или покажите QR-код: «${esc(plan.title)}» появится в кабинете сразу после оплаты.</span></p>`
+      }`);
     $$('[data-plan]', sheet.body).forEach((b) =>
       b.addEventListener('click', () => {
         selected = b.dataset.plan;
@@ -541,7 +546,7 @@ function openTopup(preselect) {
         $(`[data-plan="${selected}"]`, sheet.body).focus();
       })
     );
-    $('[data-pay]', sheet.body).addEventListener('click', (e) => startPayment(plan, e.currentTarget));
+    $('[data-pay]', sheet.body)?.addEventListener('click', (e) => startPayment(plan, e.currentTarget));
   };
 
   const startPayment = async (plan, btn) => {

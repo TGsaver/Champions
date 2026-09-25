@@ -546,6 +546,10 @@ function bindShell() {
   app.onclick = async (e) => {
     const t = e.target.closest('button');
     if (!t) return;
+    // после любого действия возвращаем фокус в поле сканера — следующий QR-код попадёт туда
+    setTimeout(() => {
+      if (!document.querySelector('.sheet-backdrop') && !t.closest('form')) $('#scan-input')?.focus({ preventScroll: true });
+    }, 0);
     if (t.dataset.guest) {
       try {
         state.overview = await api('POST', '/admin/guests', { action: t.dataset.guest });

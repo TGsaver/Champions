@@ -9,7 +9,8 @@
     name: gym.name,
     description: gym.tagline,
     telephone: gym.contacts.phone,
-    image: '/assets/img/og.png',
+    image: abs('/assets/img/og.png'),
+    ...(publicUrl ? { url: `${publicUrl}/` } : {}),
     address: {
       '@type': 'PostalAddress',
       streetAddress: `${gym.address.street}, ${gym.address.details}`,
@@ -38,7 +39,10 @@
   <meta property="og:locale" content="ru_RU">
   <meta property="og:title" content="<%= gym.name %> — стань чемпионом">
   <meta property="og:description" content="Тренажёрный зал в Махачкале на <%= gym.address.street %>. Загрузка зала онлайн, абонементы и QR-пропуск в личном кабинете.">
-  <meta property="og:image" content="/assets/img/og.png">
+  <meta property="og:image" content="<%= abs('/assets/img/og.png') %>">
+  <meta name="twitter:card" content="summary_large_image">
+  <% if (publicUrl) { %><link rel="canonical" href="<%= publicUrl %>/">
+  <meta property="og:url" content="<%= publicUrl %>/"><% } %>
   <link rel="stylesheet" href="/assets/css/landing.css?v=<%= v %>">
   <script src="/assets/js/boot.js?v=<%= v %>"></script>
   <script type="application/ld+json"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script>
@@ -208,7 +212,7 @@
         <div class="section__head section__head--center">
           <p class="eyebrow" data-reveal>Абонементы</p>
           <h2 class="section-title" data-reveal style="--d:60ms">Выберите свой формат.</h2>
-          <p class="lead" data-reveal style="--d:120ms">Оплачивайте онлайн в личном кабинете или на ресепшене. QR-пропуск появится сразу после оплаты.</p>
+          <p class="lead" data-reveal style="--d:120ms"><% if (onlinePayments) { %>Оплачивайте онлайн в личном кабинете или на ресепшене. QR-пропуск появится сразу после оплаты.<% } else { %>Оформите абонемент на ресепшене — баланс и QR-пропуск появятся в личном кабинете.<% } %></p>
         </div>
         <div class="plans__grid">
           <% plans.forEach((p, i) => { %>
@@ -221,7 +225,7 @@
             <ul class="plan__features">
               <% (p.features || []).forEach((f) => { %><li><%- icon('check') %><span><%= f %></span></li><% }) %>
             </ul>
-            <a class="btn <%= p.featured ? 'btn--gold' : 'btn--ghost' %> btn--block" href="/account?buy=<%= p.id %>">Купить онлайн</a>
+            <a class="btn <%= p.featured ? 'btn--gold' : 'btn--ghost' %> btn--block" href="/account?buy=<%= p.id %>"><%= onlinePayments ? 'Купить онлайн' : 'Выбрать' %></a>
           </article>
           <% }) %>
         </div>
@@ -410,7 +414,7 @@
       <div class="container">
         <div class="final__emblem emblem-gold" data-reveal="scale" role="img" aria-label="<%= gym.name %>"></div>
         <h2 class="section-title" data-reveal>Первая тренировка —<br><span class="text-gold">сегодня.</span></h2>
-        <p class="lead" data-reveal style="--d:80ms;margin-left:auto;margin-right:auto">Купите абонемент онлайн и покажите QR-код на входе.</p>
+        <p class="lead" data-reveal style="--d:80ms;margin-left:auto;margin-right:auto"><%= onlinePayments ? 'Купите абонемент онлайн и покажите QR-код на входе.' : 'Зарегистрируйтесь в личном кабинете и покажите QR-код на входе.' %></p>
         <div class="hero__cta" data-reveal style="--d:140ms">
           <a class="btn btn--gold" href="/account">Купить абонемент</a>
           <a class="btn btn--ghost" href="<%= gym.contacts.phoneHref %>">Позвонить</a>

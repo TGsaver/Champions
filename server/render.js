@@ -53,7 +53,7 @@ function loadReviews() {
   }
 }
 
-export async function createRenderer({ config, demo }) {
+export async function createRenderer({ config, demo, publicUrl = null, onlinePayments = true }) {
   const emblemRaw = fs.readFileSync(path.join(VIEWS, 'partials/emblem.svg'), 'utf8');
   const wordmark = fs.readFileSync(path.join(VIEWS, 'partials/wordmark.svg'), 'utf8');
   const sampleQr = await QRCode.toString('GC:DEMO2026', { type: 'svg', margin: 0, errorCorrectionLevel: 'M' });
@@ -76,6 +76,9 @@ export async function createRenderer({ config, demo }) {
     sampleQr,
     rub,
     v: version,
+    onlinePayments,
+    publicUrl,
+    abs: (p) => (publicUrl ? `${publicUrl}${p}` : p),
     year: new Date().getFullYear(),
   });
 

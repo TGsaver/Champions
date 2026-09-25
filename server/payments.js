@@ -8,7 +8,9 @@ export function planSnapshot(plan) {
   return { id, title, price, visits, days, freezeDays };
 }
 
-export function createPayments({ db, config, memberships, provider = null, clock = () => Date.now() }) {
+export function createPayments({ db, config, memberships, provider = null, allowDemo = false, clock = () => Date.now() }) {
+  // Без платёжного сервиса онлайн-оплата работает только в демо-режиме (без списания денег).
+  const providerName = provider?.name ?? (allowDemo ? 'demo' : null);
   const plans = new Map(config.plans.map((p) => [p.id, p]));
   const q = {
     get: db.prepare('SELECT * FROM payments WHERE id = ?'),
@@ -65,6 +67,9 @@ export function createPayments({ db, config, memberships, provider = null, clock
   /** Онлайн-оплата из личного кабинета. */
   async function start({ user, planId, returnUrl }) {
     const plan = findPlan(planId);
+    if (!providerName) {
+      throw new AppError('payments_disabled', 'Онлайн-оплата пока не подключена. Пополнить абонемент можно на ресепшене', 503);
+    }
     if (!provider) {
       const payment = insert({ userId: user.id, plan, providerName: 'demo' });
       return { payment, confirmation: { type: 'demo' } };
@@ -84,7 +89,7 @@ export function createPayments({ db, config, memberships, provider = null, clock
   function confirmDemo({ user, paymentId }) {
     const p = get(paymentId);
     if (!p || p.user_id !== user.id) throw new AppError('not_found', 'Платёж не найден', 404);
-    if (p.provider !== 'demo') throw new AppError('not_demo', 'Этот платёж нельзя подтвердить вручную', 409);
+    if (p.provider !== 'demo' || !allowDemo) throw new AppError('not_demo', 'Этот платёж нельзя подтвердить вручную', 409);
     return markSucceeded(p.id);
   }
 
@@ -116,5 +121,5 @@ export function createPayments({ db, config, memberships, provider = null, clock
     });
   }
 
-  return { get, start, confirmDemo, sync, handleWebhook, recordOffline, markSucceeded, providerName: provider?.name ?? 'demo' };
+  return { get, start, confirmDemo, sync, handleWebhook, recordOffline, markSucceeded, providerName };
 }

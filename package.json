@@ -11,10 +11,9 @@
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning server/index.js",
     "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
-    "demo": "DEMO_MODE=true node --disable-warning=ExperimentalWarning server/index.js",
-    "test": "node --disable-warning=ExperimentalWarning --test 'test/**/*.test.js'",
-    "create-admin": "node --disable-warning=ExperimentalWarning scripts/create-admin.js",
-    "build:static": "node --disable-warning=ExperimentalWarning scripts/build-static.js"
+    "demo": "node --disable-warning=ExperimentalWarning server/index.js --demo",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/*.test.js\"",
+    "create-admin": "node --disable-warning=ExperimentalWarning scripts/create-admin.js"
   },
   "dependencies": {
     "ejs": "^3.1.10",

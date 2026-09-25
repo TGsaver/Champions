@@ -11,7 +11,7 @@ const flag = (v) => ['1', 'true', 'yes', 'on'].includes(String(v).toLowerCase())
 
 const PORT = Number(env.PORT) || 3000;
 const HOST = env.HOST || '0.0.0.0';
-const DEMO = flag(env.DEMO_MODE);
+const DEMO = flag(env.DEMO_MODE) || process.argv.includes('--demo');
 const db = openDb(env.DATABASE_PATH || 'data/gym.db');
 
 // Первый администратор из переменных окружения (если админов ещё нет).
@@ -19,8 +19,11 @@ const hasAdmin = db.prepare("SELECT 1 FROM users WHERE role = 'admin' LIMIT 1").
 if (!hasAdmin && env.ADMIN_PHONE && env.ADMIN_PASSWORD) {
   const phone = normalizePhone(env.ADMIN_PHONE);
   if (!phone) throw new Error('ADMIN_PHONE: неверный формат номера');
+  if (env.ADMIN_PASSWORD.length < 8) throw new Error('ADMIN_PASSWORD: не короче 8 символов');
   await createUser(db, { name: env.ADMIN_NAME || 'Администратор', phone, password: env.ADMIN_PASSWORD, role: 'admin' });
   console.log(`Создан администратор ${phone}`);
+} else if (!hasAdmin && !DEMO) {
+  console.log('Администратора ещё нет. Создайте: npm run create-admin -- +79001234567 "Имя Фамилия"');
 }
 
 if (DEMO) await seedDemo(db, config);
@@ -50,7 +53,8 @@ setInterval(() => ctx.sessions.purgeExpired(), 3600 * 1000).unref();
 
 const server = app.listen(PORT, HOST, () => {
   console.log(`Gym Champions: http://localhost:${PORT}${DEMO ? '  (демо-режим)' : ''}`);
-  console.log(`Оплата: ${paymentProvider ? 'ЮKassa' : 'демо (деньги не списываются)'}`);
+  const pay = paymentProvider ? 'ЮKassa' : DEMO ? 'демо (деньги не списываются)' : 'онлайн выключена, оплата на ресепшене';
+  console.log(`Оплата: ${pay}`);
 });
 
 function shutdown() {

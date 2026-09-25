@@ -178,3 +178,28 @@ test('профиль: имя, цель, смена пароля завершае
   assert.equal((await a('GET', '/api/me')).status, 200);
   assert.equal((await b('GET', '/api/me')).status, 401);
 });
+
+test('без платёжного сервиса и вне демо-режима онлайн-оплата выключена', async () => {
+  const prod = await startApp({ demoPayments: false });
+  try {
+    const c = prod.client();
+    await c('POST', '/api/auth/register', { name: 'Прод', phone: '79990001111', password: 'secret-123', consent: true });
+    const cfg = await c('GET', '/api/config');
+    assert.equal(cfg.data.paymentProvider, null);
+    const r = await c('POST', '/api/payments', { planId: 'month' });
+    assert.equal(r.status, 503);
+    assert.equal(r.data.error, 'payments_disabled');
+    // подтвердить «демо-платёж» тоже нельзя
+    prod.db
+      .prepare(
+        "INSERT INTO payments (id, user_id, plan_id, plan_title, plan_json, amount, status, provider, created_at) VALUES ('p1', 1, 'month', 'Месяц', '{\"days\":30}', 2200, 'pending', 'demo', 0)"
+      )
+      .run();
+    const confirm = await c('POST', '/api/payments/p1/confirm');
+    assert.equal(confirm.status, 409);
+    const me = await c('GET', '/api/me');
+    assert.equal(me.data.membership.unlimited, null);
+  } finally {
+    await prod.close();
+  }
+});

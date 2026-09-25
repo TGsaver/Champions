@@ -6,7 +6,7 @@ import { createUser } from '../server/routes/auth.js';
 export const config = baseConfig;
 
 /** Поднимает приложение на случайном порту с управляемыми часами. */
-export async function startApp({ now = Date.parse('2026-09-23T15:00:00Z'), demo = false, paymentProvider = null } = {}) {
+export async function startApp({ now = Date.parse('2026-09-23T15:00:00Z'), demo = false, paymentProvider = null, demoPayments = true } = {}) {
   const clock = { now };
   const db = openDb(':memory:');
   const { app, ctx } = await createApp({
@@ -15,6 +15,7 @@ export async function startApp({ now = Date.parse('2026-09-23T15:00:00Z'), demo 
     demo,
     clock: () => clock.now,
     paymentProvider,
+    demoPayments,
     logger: { error() {} },
   });
   const server = await new Promise((resolve) => {

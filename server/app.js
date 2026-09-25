@@ -70,14 +70,15 @@ export async function createApp({
   secureCookies = false,
   trustProxy = false,
   paymentProvider = null,
+  demoPayments = demo,
   publicUrl = null,
   logger = console,
 }) {
   const memberships = createMemberships({ db, config, clock });
   const occupancy = createOccupancy({ db, config, demo, clock });
-  const payments = createPayments({ db, config, memberships, provider: paymentProvider, clock });
+  const payments = createPayments({ db, config, memberships, provider: paymentProvider, allowDemo: demoPayments, clock });
   const sessions = createSessions({ db, secureCookies, clock });
-  const renderer = await createRenderer({ config, demo });
+  const renderer = await createRenderer({ config, demo, publicUrl, onlinePayments: Boolean(payments.providerName) });
   const ctx = { db, config, demo, clock, memberships, occupancy, payments, sessions, publicUrl };
 
   const app = express();
