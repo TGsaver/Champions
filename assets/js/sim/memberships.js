@@ -1,0 +1,1 @@
+export const DEFAULT_VISIT_MINUTES = 90;
