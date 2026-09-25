@@ -28,6 +28,10 @@ if (!hasAdmin && env.ADMIN_PHONE && env.ADMIN_PASSWORD) {
 
 if (DEMO) await seedDemo(db, config);
 
+if (env.YOOKASSA_SHOP_ID && env.YOOKASSA_SECRET_KEY && !env.PUBLIC_URL) {
+  // адрес возврата после оплаты нельзя брать из заголовка Host — его подделывают
+  throw new Error('Для ЮKassa задайте PUBLIC_URL — адрес сайта, например https://example.ru');
+}
 const paymentProvider =
   env.YOOKASSA_SHOP_ID && env.YOOKASSA_SECRET_KEY
     ? createYooKassa({
