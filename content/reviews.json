@@ -1,0 +1,22 @@
+{
+  "_comment": "Отзывы для блока «Отзывы» на главной. sources — карточки площадок (рейтинг проверьте в карточке зала). reviews — отзывы для карусели: {\"author\", \"date\": \"2026-09-01\", \"rating\": 5, \"source\": \"yandex\" | \"2gis\", \"text\"}. Живой виджет Яндекс Карт показывает актуальные отзывы автоматически.",
+  "sources": [
+    {
+      "id": "yandex",
+      "name": "Яндекс Карты",
+      "rating": null,
+      "count": null,
+      "url": "https://yandex.ru/maps/org/gym_champion/199573048114/reviews/",
+      "reviewUrl": "https://yandex.ru/maps/org/gym_champion/199573048114/reviews/"
+    },
+    {
+      "id": "2gis",
+      "name": "2ГИС",
+      "rating": 5.0,
+      "count": null,
+      "url": "https://2gis.ru/makhachkala/firm/70000001033665957/tab/reviews",
+      "reviewUrl": "https://2gis.ru/makhachkala/firm/70000001033665957/tab/reviews"
+    }
+  ],
+  "reviews": []
+}
