@@ -30,7 +30,7 @@
   const reviewSource = (id) => reviews.sources.find((s) => s.id === id);
   const stars = (value) => [1,2,3,4,5].map((i) => `<span class="${value >= i - 0.25 ? '' : 'off'}">${icon('star')}</span>`).join('');
 %><!doctype html>
-<html lang="ru" class="no-js">
+<html lang="ru" class="no-js" data-home>
 <head>
   <%- include('partials/head') %>
   <title><%= gym.name %> — тренажёрный зал в Махачкале, <%= gym.address.street %></title>

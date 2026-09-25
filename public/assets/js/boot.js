@@ -4,7 +4,7 @@
   root.classList.remove('no-js');
   root.classList.add('js');
   try {
-    var home = location.pathname === '/' || location.pathname === '/index.html';
+    var home = root.hasAttribute('data-home');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var seen = sessionStorage.getItem('gc-intro');
     if (home && !reduce && !seen && !location.hash) {

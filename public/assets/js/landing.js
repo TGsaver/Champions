@@ -83,7 +83,7 @@ function initNav() {
   });
 
   // Подсветка текущего раздела
-  const links = new Map($$('.nav__links a').map((a) => [a.getAttribute('href').replace('/', ''), a]));
+  const links = new Map($$('.nav__links a').map((a) => [a.hash, a]));
   const io = new IntersectionObserver(
     (entries) => {
       for (const e of entries) {
